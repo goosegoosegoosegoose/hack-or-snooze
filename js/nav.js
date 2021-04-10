@@ -40,4 +40,13 @@ function navSubmitClick(evt) {
   $("#submit-story-form").show();
 }
 
-$("#submit-story").on("click", navSubmitClick());
+$("#story-submit").on("click", navSubmitClick);
+
+function navFavClick(evt) {
+  console.debug("navFavClick", evt);
+  generateStoryMarkup();
+  $allStoriesList.hide();
+  $("#favorite-stories").show();
+}
+
+$("#favorites").on("click", navFavClick)

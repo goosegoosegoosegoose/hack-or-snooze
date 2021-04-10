@@ -51,12 +51,34 @@ function putStoriesOnPage() {
   $allStoriesList.show();
 }
 
-function getStory(){
+async function getStory(evt){
+  evt.preventDefault();
+
   const title = $("#submit-title").val();
   const author = $("#submit-author").val();
   const url = $("#submit-url").val();
 
-  return StoryList.addStory(currentUser, {title, author, url})
+  const story = await storyList.addStory(currentUser, {title, author, url});
+
+  const storyHTML = generateStoryMarkup(story);
+  $allStoriesList.prepend(storyHTML);
+
+  $("#submit-story-form").hide();
 }
 
-$("#submit-story-btn").on("submit", getStory());
+$("#submit-story-btn").on("click", getStory);
+
+function generateFavoriteMarkup() {
+  $("#favorite-stories").empty();
+
+  if (currentUser.favorites.length === 0){
+    $("#favorite-stories").append("<h1>Empty</h1>");
+  }
+  else {
+    for (let story in currentUser.favorites) {
+      $("#favorite-stories").append(generateStoryMarkup(story));
+    }
+  }
+}
+
+// gethostname doesn't work in generateStorymarksup

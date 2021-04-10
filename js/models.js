@@ -84,18 +84,18 @@ class StoryList {
       method: `POST`,
       data: {
         token: token,
-        story: {        
+        story: {
+          title: title,        
           author: author,
-          title: title,
           url: url
         }
       }
     });
 
     const story = new Story(res.data.story);
-    this.stories.unshift(Story);
+    this.stories.unshift(story);
     // remember unshift vs append
-    user.ownstories.unshift(Story);
+    user.ownStories.unshift(story);
     return story;
   }
 }
@@ -214,5 +214,27 @@ class User {
       console.error("loginViaStoredCredentials failed", err);
       return null;
     }
+  }
+
+  async favoriteStory(story){
+    this.favorites.unshift(story);
+    await this.addRemoveFav(`add`, story)
+  }
+
+  async removeFavoriteStory(story){
+    if (this.favorites.includes(story)){
+      
+      await this.addRemoveFav(`remove`, story);
+    }
+  }
+
+  async addRemoveFav(state, story){
+    const action = state === "add" ? "POST" : "DELETE";
+    const token = this.loginToken;
+    await axios({
+      url: `${BASE_URL}/users/${this.username}/favorites/${story.storyId}`,
+      method: action,
+      data: {token}
+    });
   }
 }
