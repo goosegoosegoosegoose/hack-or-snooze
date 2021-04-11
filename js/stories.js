@@ -25,6 +25,7 @@ function generateStoryMarkup(story) {
   const hostName = story.getHostName();
   return $(`
       <li id="${story.storyId}">
+        <span class="favor" id="unchecked">&#9898;</span>
         <a href="${story.url}" target="a_blank" class="story-link">
           ${story.title}
         </a>
@@ -75,10 +76,30 @@ function generateFavoriteMarkup() {
     $("#favorite-stories").append("<h1>Empty</h1>");
   }
   else {
-    for (let story in currentUser.favorites) {
-      $("#favorite-stories").append(generateStoryMarkup(story));
+    for (let story of currentUser.favorites) {
+      const $story = generateStoryMarkup(story);
+      $("#favorite-stories").append($story);
     }
   }
+  $("#favorite-stories").show();
 }
 
-// gethostname doesn't work in generateStorymarksup
+async function toggleFavorite(evt){
+  const $li = $(evt.target).closest("li");
+  const storyId = $li.attr("id");
+  const story = storyList.stories.find(id => storyId === id);
+
+  if ($(evt.target).attr(`id`) === "unchecked") {
+    // $(evt.target).closest("span").val() = "&#9899;";
+    $(evt.target).attr(`id`, `checked`);
+    await currentUser.favoriteStory(story);
+  }
+  else if ($(evt.target).attr(`id`) === "checked") {
+    // $(evt.target).val() = "&#9898;";
+    $(evt.target).attr(`id`, `unchecked`);
+    await currentUser.removeFavoriteStory(story);
+  }
+}  
+// could've toggleClass'd somehow but I still don't completely understand it.
+
+$allStoriesList.on("click", ".favor", toggleFavorite);

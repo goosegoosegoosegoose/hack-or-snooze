@@ -217,13 +217,12 @@ class User {
   }
 
   async favoriteStory(story){
-    this.favorites.unshift(story);
-    await this.addRemoveFav(`add`, story)
+    this.favorites.push(story);
+    await this.addRemoveFav(`add`, story);
   }
 
   async removeFavoriteStory(story){
     if (this.favorites.includes(story)){
-      
       await this.addRemoveFav(`remove`, story);
     }
   }
@@ -237,4 +236,7 @@ class User {
       data: {token}
     });
   }
+
 }
+
+// STORY FUCKING UNDEFINED

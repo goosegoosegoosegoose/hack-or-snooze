@@ -37,3 +37,10 @@
 .story-user {
   display: block;
 }
+
+.favor {
+  font-size: 1rem;
+  margin: 0 3px;
+  cursor: pointer;
+}
+

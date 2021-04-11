@@ -44,8 +44,8 @@ $("#story-submit").on("click", navSubmitClick);
 
 function navFavClick(evt) {
   console.debug("navFavClick", evt);
-  generateStoryMarkup();
-  $allStoriesList.hide();
+  generateFavoriteMarkup();
+  hidePageComponents();
   $("#favorite-stories").show();
 }
 
