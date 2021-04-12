@@ -50,3 +50,12 @@ function navFavClick(evt) {
 }
 
 $("#favorites").on("click", navFavClick)
+
+function navOwnClick(evt){
+  console.debug("navOwnClick", evt);
+  generateOwnMarkup();
+  hidePageComponents();
+  $("#own-stories").show();
+}
+
+$("#own").on("click", navOwnClick);

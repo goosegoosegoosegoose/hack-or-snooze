@@ -98,6 +98,20 @@ class StoryList {
     user.ownStories.unshift(story);
     return story;
   }
+
+  async deleteStory(user, storyId){
+    const token = user.loginToken;
+    // const storyId = currentUser.ownStories.find(s => s.storyId === story);
+    await axios({
+      url: `${BASE_URL}/stories/${storyId}`,
+      // i guess story.storyId is not it
+      method: "DELETE",
+      data: {token}
+    })
+    // gave me 401 unathorize til I look at answers and discovered adding user param
+    // why is currentUser not sufficient? Is it because we're in StoryList?
+    // deleted story does not disappear from storylist until hard refresh
+  }
 }
 
 
@@ -222,21 +236,26 @@ class User {
   }
 
   async removeFavoriteStory(story){
+    console.debug("removeFavoriteStory");
+    const index = this.favorites.indexOf(story);
+    console.log(index);
     if (this.favorites.includes(story)){
       await this.addRemoveFav(`remove`, story);
+      this.favorites.splice(index, 1);
     }
   }
 
   async addRemoveFav(state, story){
-    const action = state === "add" ? "POST" : "DELETE";
+    console.debug("addRemoveFav", state,);
+    const action = (state === `add`) ? "POST" : "DELETE";
     const token = this.loginToken;
     await axios({
       url: `${BASE_URL}/users/${this.username}/favorites/${story.storyId}`,
       method: action,
       data: {token}
     });
+    console.log(action);
   }
-
+  
 }
 
-// STORY FUCKING UNDEFINED

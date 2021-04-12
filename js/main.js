@@ -25,7 +25,8 @@ function hidePageComponents() {
     $loginForm,
     $signupForm,
     $("#favorite-stories"),
-    $("#submit-story-form")
+    $("#submit-story-form"),
+    $("#own-stories")
   ];
   components.forEach(c => c.hide());
 }

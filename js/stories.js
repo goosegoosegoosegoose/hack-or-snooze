@@ -23,9 +23,13 @@ function generateStoryMarkup(story) {
   // console.debug("generateStoryMarkup", story);
 
   const hostName = story.getHostName();
+  const checkFavor = (currentUser.favorites.find(s => s === story)) ? "checked" : "unchecked";
+  const checkOwn = (currentUser.ownStories.find(s => s === story)) ? "" : "hidden";
+  const circleColor = (checkFavor === "checked") ? "&#9899;" : "&#9898;"
   return $(`
       <li id="${story.storyId}">
-        <span class="favor" id="unchecked">&#9898;</span>
+        <span class="${checkOwn} delete">&#x26B0;</span>
+        <span class="favor" id="${checkFavor}">${circleColor}</span>
         <a href="${story.url}" target="a_blank" class="story-link">
           ${story.title}
         </a>
@@ -84,18 +88,20 @@ function generateFavoriteMarkup() {
   $("#favorite-stories").show();
 }
 
+
 async function toggleFavorite(evt){
   const $li = $(evt.target).closest("li");
   const storyId = $li.attr("id");
-  const story = storyList.stories.find(id => storyId === id);
+  const story = storyList.stories.find(s => s.storyId === storyId);
+  // the find() method is hell please remember how to use I don't want to be stuck here again
 
   if ($(evt.target).attr(`id`) === "unchecked") {
-    // $(evt.target).closest("span").val() = "&#9899;";
+    evt.target.innerHTML = "&#9899;";
     $(evt.target).attr(`id`, `checked`);
     await currentUser.favoriteStory(story);
   }
-  else if ($(evt.target).attr(`id`) === "checked") {
-    // $(evt.target).val() = "&#9898;";
+  else {
+    evt.target.innerHTML= "&#9898;";
     $(evt.target).attr(`id`, `unchecked`);
     await currentUser.removeFavoriteStory(story);
   }
@@ -103,3 +109,35 @@ async function toggleFavorite(evt){
 // could've toggleClass'd somehow but I still don't completely understand it.
 
 $allStoriesList.on("click", ".favor", toggleFavorite);
+$("#favorite-stories").on("click", ".favor", toggleFavorite);
+$("#own-stories").on("click", ".favor", toggleFavorite);
+
+function generateOwnMarkup() {
+  $("#own-stories").empty()
+
+  if (currentUser.ownStories.length === 0){
+    $("#own-stories").append("<h1>No stories posted</h1>");
+  }
+  else{
+    for (let story of currentUser.ownStories) {
+      const $story = generateStoryMarkup(story);
+      $("#own-stories").append($story);
+      console.log($story);
+    }
+  }
+}
+
+async function deleteOwnStory(evt) {
+  const $li = $(evt.target).closest("li");
+  const storyId = $li.attr("id");
+  const story = currentUser.ownStories.find(s => s.storyId === storyId);
+  const ownIndex = currentUser.ownStories.indexOf(story);
+
+  await storyList.deleteStory(currentUser, storyId);
+  currentUser.ownStories.splice(ownIndex, 1);
+}
+
+$allStoriesList.on("click", ".delete", deleteOwnStory);
+$("#favorite-stories").on("click", ".delete", deleteOwnStory);
+$("#own-stories").on("click", ".delete", deleteOwnStory);
+// can i just do document.on()

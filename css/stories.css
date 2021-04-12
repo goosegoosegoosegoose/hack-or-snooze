@@ -38,9 +38,13 @@
   display: block;
 }
 
-.favor {
+.favor .delete{
   font-size: 1rem;
   margin: 0 3px;
   cursor: pointer;
 }
 
+/* .delete:hover {
+  color: transparent;  
+  text-shadow: 0 0 0 rgb(160, 34, 34);
+} */
