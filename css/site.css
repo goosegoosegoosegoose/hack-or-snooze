@@ -44,6 +44,10 @@ a:hover {
   display: none;
 }
 
+#hidden {
+  display: none;
+}
+
 
 /* Forms */
 
@@ -120,4 +124,11 @@ form > hr {
     max-width: 900px;
     margin: 8px auto;
   }
+}
+
+.warning {
+  margin: 10px 0px;
+  padding:12px;
+  color: #D8000C;
+  background-color: #FFD2D2;
 }

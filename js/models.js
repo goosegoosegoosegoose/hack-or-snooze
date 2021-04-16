@@ -24,11 +24,16 @@ class Story {
   /** Parses hostname out of URL and returns it. */
 
   getHostName() {
-    // UNIMPLEMENTED: complete this function!
-
-    return this.url;
-    // is hostname the website it links to or the hack or snooze webpage?
+    const url = this.url
+    const match = url.match(/:\/\/(www[0-9]?\.)?(.[^/:]+)/i);
+    if (match != null && match.length > 2 && typeof match[2] === 'string' && match[2].length > 0) {
+      return match[2];
+    }
+    else {
+        return null;
+    }
   }
+  // stolen code
 }
 
 
@@ -77,26 +82,31 @@ class StoryList {
   // would be nice if the instructions were maybe a thousand times more clear
 
   async addStory(user, {title, author, url}) {
-    // UNIMPLEMENTED: complete this function!
-    const token = user.loginToken;
-    const res = await axios({
-      url: `${BASE_URL}/stories`,
-      method: `POST`,
-      data: {
-        token: token,
-        story: {
-          title: title,        
-          author: author,
-          url: url
+    try {
+      const token = user.loginToken;
+      const res = await axios({
+        url: `${BASE_URL}/stories`,
+        method: `POST`,
+        data: {
+          token: token,
+          story: {
+            title: title,        
+            author: author,
+            url: url
+          }
         }
-      }
-    });
+      });
 
-    const story = new Story(res.data.story);
-    this.stories.unshift(story);
-    // remember unshift vs append
-    user.ownStories.unshift(story);
-    return story;
+      const story = new Story(res.data.story);
+      this.stories.unshift(story);
+      // remember unshift vs append
+      user.ownStories.unshift(story);
+      return story;
+    } catch(err){
+      console.error("addStory failed", err);
+      $(".warning").show();
+      return null;
+    }
   }
 
   async deleteStory(user, storyId){
@@ -108,6 +118,8 @@ class StoryList {
       method: "DELETE",
       data: {token}
     })
+
+    getAndShowStoriesOnStart();
     // gave me 401 unathorize til I look at answers and discovered adding user param
     // why is currentUser not sufficient? Is it because we're in StoryList?
     // deleted story does not disappear from storylist until hard refresh

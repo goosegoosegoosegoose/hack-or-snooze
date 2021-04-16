@@ -23,8 +23,8 @@ function generateStoryMarkup(story) {
   // console.debug("generateStoryMarkup", story);
 
   const hostName = story.getHostName();
-  const checkFavor = (currentUser.favorites.find(s => s === story)) ? "checked" : "unchecked";
-  const checkOwn = (currentUser.ownStories.find(s => s === story)) ? "" : "hidden";
+  const checkFavor = currentUser ? (currentUser.favorites.find(s => s === story)) ? "checked" : "unchecked" : "hidden";
+  const checkOwn =  currentUser ? (currentUser.ownStories.find(s => s === story)) ? "" : "hidden" : "hidden";
   const circleColor = (checkFavor === "checked") ? "&#9899;" : "&#9898;"
   return $(`
       <li id="${story.storyId}">
@@ -64,11 +64,14 @@ async function getStory(evt){
   const url = $("#submit-url").val();
 
   const story = await storyList.addStory(currentUser, {title, author, url});
+  
+
 
   const storyHTML = generateStoryMarkup(story);
   $allStoriesList.prepend(storyHTML);
 
-  $("#submit-story-form").hide();
+  hidePageComponents();
+  $allStoriesList.show();
 }
 
 $("#submit-story-btn").on("click", getStory);
